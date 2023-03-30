@@ -21,4 +21,9 @@ class Specialization extends Model
         return $return_data;
     }
 
+    public function save(array $data) {
+        $sql = "INSERT into specializations (specialization) values ('".$data["name"]."')";
+        return $this->con->query($sql);
+    }
+
 }

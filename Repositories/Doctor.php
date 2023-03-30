@@ -7,7 +7,7 @@ class Doctor extends Model
         parent::__construct();
     }
 
-    public function getDoctors()
+    private function getDoctors()
     {
         $sql = "SELECT doctors.id,doctors.name,doctors.email,doctors.phone_number,doctors.degree,specializations.specialization  from `doctors` INNER JOIN specializations ON doctors.specialization_id = specializations.id";
         return $this->con->query($sql);
@@ -22,5 +22,10 @@ class Doctor extends Model
         }
         return $doctor;
     }
+    public function save(array $data){
+        $sql = "insert into `doctors`(name,email,phone_number,degree,specialization_id) values ('".$data["name"]."','".$data['email']."','".$data['number']."','".$data['degree']."','".$data['specialization']."')";
+        return $this->con->query($sql);
+    }
+
 
 }

@@ -1,7 +1,8 @@
 <?php include("layout/header.php") ?>
 
 <div class="container">
-    <a href="#" class="btn btn-primary mb-5">Create Doctor Availability</a>
+    <a href="#" class="btn btn-primary mb-5 data-toggle=" data-toggle="modal" data-target="#createdoctorappointment">Create
+        Doctor Appointment</a>
     <table class="table table-hover table-active table-bordered">
         <thead class="thead-dark">
         <tr>
@@ -20,9 +21,59 @@
     </table>
 </div>
 
+
+<div class="modal " id="createdoctorappointment" tabindex="-1" role="dialog">
+    <div class="modal-dialog " role="document">
+        <div class="modal-content bg-dark text-light">
+            <div class="modal-header">
+                <h5 class="modal-title">Create Doctor Availability</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="createappointment">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <input type="text" id="patient_name" name="patient_name" class="form-control"
+                               placeholder="Patient Name" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="patient_number" name="patient_number" class="form-control"
+                               placeholder="Patient Mobile Number" required>
+                    </div>
+                    <div class="form-group">
+                        <select id="specialization" name="specialization" class="form-control" required>
+                            <option value="">Select Specialization...!</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <select id="name" name="name" class="form-control" required>
+                            <option value="">Select Doctor...!</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <input type="date" id="day" name="date" class="form-control"
+                               placeholder="Date" required>
+                    </div>
+                    <div class="form-group">
+                        <select id="appointment_time" name="appointment_time" class="form-control" required>
+                            <option value="">Select Time...!</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" id="btn" class="btn btn-success">Save changes</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
 <script>
     function getHtml(results) {
-        debugger
         let html = '';
         for (var i = 0; i < results.length; i++) {
             let reuslt = results[i]
@@ -42,14 +93,108 @@
         return html
     }
 
-    $.ajax({
-        url: "api.php?action=get_doctor_appointment",
-        method: "GET",
-        success: (resp) => {
-            $('#doctor_appointment_list').html(getHtml(resp));
-        }
+    let loadData = () => {
+        $.ajax({
+            url: "api.php?action=get_doctor_appointment",
+            method: "GET",
+            success: (resp) => {
+                $('#doctor_appointment_list').html(getHtml(resp));
+            }
 
+        })
+    }
+    loadData();
+
+    $.ajax({
+        url: 'api.php?action=get_specialization',
+        method: 'GET',
+        success: function (specializations) {
+
+            let options = '<option value="">Select Specialization...!</option>';
+            for (var i = 0; i < specializations.length; i++) {
+                let specialization = specializations[i];
+                options += `<option value="${specialization['id']}">${specialization['specialization']}</option>`;
+            }
+            $('#specialization').html(options);
+        }
+    });
+
+
+    $('#specialization').change(function () {
+        let specializationValue = $('#specialization').val()
+        $.ajax({
+            url: "api.php?action=get_doctor_by_specialization&specialization_id=" + specializationValue,
+            method: "GET",
+            success: (resp) => {
+                $('#name').empty();
+                let html = document.getElementById('name');
+                let element = document.createElement('option')
+                element.text = 'Select Doctor...!'
+                element.value = ''
+                html.add(element)
+                for (let i = 0; i < resp.length; i++) {
+                    let data = resp[i]
+                    let element = document.createElement('option')
+                    element.text = data.name
+                    element.value = data.id
+                    html.add(element)
+                }
+            }
+        })
+    });
+
+    $("#day").change(function () {
+
+        let doctor_id = $("#name").val();
+        let day = $("#day").val();
+        debugger
+        $.ajax({
+
+            url: "api.php?action=get_time_slots&doctor_id=" + doctor_id + "&day=" + day,
+            method: "GET",
+            success: (Result) => {
+                $('#appointment_time').empty();
+                let html = document.getElementById('appointment_time');
+                for (let i = 0; i < Result.length; i++) {
+                    let slotTime = Result[i]
+                    let slotOption = document.createElement('option')
+                    slotOption.text = slotTime.text
+                    slotOption.value = slotTime.value
+                    html.add(slotOption)
+                }
+            }
+        })
     })
+
+
+    $('#createappointment').on('submit', (event) => {
+        event.preventDefault();
+        let patient_name = $('#patient_name').val();
+        let patient_phone = $("#patient_number").val();
+        let doctor_id = $("#name").val();
+        let specialization_id = $("#specialization").val();
+        let day = $("#day").val();
+        let appointment_time = $("#appointment_time").val();
+
+        $.ajax({
+            url: "api.php?action=create_doctor_appointment",
+            method: "POST",
+            data: {
+                patient_name: patient_name,
+                patient_phone: patient_phone,
+                doctor_id: doctor_id,
+                specialization_id: specialization_id,
+                day: day,
+                appointment_time: appointment_time
+            },
+            success: (resp) => {
+                loadData();
+                $("#createdoctorappointment").modal('hide');
+                $("#createappointment").find("input").val("");
+            }
+        })
+    })
+
 </script>
 
 <?php include("layout/footer.php") ?>

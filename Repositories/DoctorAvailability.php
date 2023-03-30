@@ -19,5 +19,19 @@ class DoctorAvailability extends Model
         }
         return $doctoravailability;
     }
+    public function save(array $data){
+        $sql = "insert into `doctor_availabilities` (doctor_id,specialization_id,day,start_at,end_at) values ('".$data['name']."','".$data['specialization']."','".$data['day']."','".$data['start_at']."','".$data['end_at']."')";
+        return $this->con->query($sql);
+    }
+    public function getDoctorsBySpecialization($specialization_id)
+    {
+        $sql = "SELECT * FROM `doctors` where specialization_id = $specialization_id";
+        $resulSet = $this->con->query($sql);
+        $doctor = [];
+        while ($row = $resulSet->fetch_assoc()) {
+            $doctor[] = $row;
+        }
+        return $doctor;
+    }
 
 }
