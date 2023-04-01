@@ -58,6 +58,7 @@
                     <div class="form-group">
                         <select id="appointment_time" name="appointment_time" class="form-control" required>
                             <option value="">Select Time...!</option>
+                            <option value="">4:30:00</option>
                         </select>
                     </div>
                 </div>
@@ -76,23 +77,22 @@
     function getHtml(results) {
         let html = '';
         for (var i = 0; i < results.length; i++) {
-            let reuslt = results[i]
+            let result = results[i]
             html += `<tr>
-<td>${reuslt['id']}</td>
-<td>${reuslt['patient_name']}</td>
-<td>${reuslt['patient_phone']}</td>
-<td>${reuslt['name']}</td>
-<td>${reuslt['specialization']}</td>
-<td>${reuslt['day']}</td>
-<td>${reuslt['appointment_time']}</td>
-            <td><a href="" class="btn btn-danger">Delete</a></td>
+<td>${result['id']}</td>
+<td>${result['patient_name']}</td>
+<td>${result['patient_phone']}</td>
+<td>${result['name']}</td>
+<td>${result['specialization']}</td>
+<td>${result['day']}</td>
+<td>${result['appointment_time']}</td>
+            <td><a href="" class="btn btn-danger delete" data-id="${result['id']}">Delete</a></td>
 
 </tr>`
 
         }
         return html
     }
-
     let loadData = () => {
         $.ajax({
             url: "api.php?action=get_doctor_appointment",
@@ -104,6 +104,19 @@
         })
     }
     loadData();
+
+    $(document).on("click",".delete",function (event){
+        debugger
+        event.preventDefault();
+        let id = $(this).data('id');
+        $.ajax({
+            url:"api.php?action=delete_doctor_appointment&id=" + id,
+            method:"POST",
+            success:(resp) =>{
+                loadData();
+            }
+        })
+    })
 
     $.ajax({
         url: 'api.php?action=get_specialization',
@@ -118,8 +131,6 @@
             $('#specialization').html(options);
         }
     });
-
-
     $('#specialization').change(function () {
         let specializationValue = $('#specialization').val()
         $.ajax({
@@ -142,31 +153,6 @@
             }
         })
     });
-
-    $("#day").change(function () {
-
-        let doctor_id = $("#name").val();
-        let day = $("#day").val();
-        debugger
-        $.ajax({
-
-            url: "api.php?action=get_time_slots&doctor_id=" + doctor_id + "&day=" + day,
-            method: "GET",
-            success: (Result) => {
-                $('#appointment_time').empty();
-                let html = document.getElementById('appointment_time');
-                for (let i = 0; i < Result.length; i++) {
-                    let slotTime = Result[i]
-                    let slotOption = document.createElement('option')
-                    slotOption.text = slotTime.text
-                    slotOption.value = slotTime.value
-                    html.add(slotOption)
-                }
-            }
-        })
-    })
-
-
     $('#createappointment').on('submit', (event) => {
         event.preventDefault();
         let patient_name = $('#patient_name').val();

@@ -28,27 +28,10 @@ class DoctorAppointment extends Model
         $sql = "insert into `doctor_appointment`(patient_name,patient_phone,doctor_id,specialization_id,day,appointment_time) values ('" . $data['patient_name'] . "','" . $data['patient_phone'] . "','" . $data['doctor_id'] . "','" . $data['specialization_id'] . "','" . $data['day'] . "','" . $data['appointment_time'] . "')";
         return $this->con->query($sql);
     }
-
-    public function getTimeSlot($doctor_id, $day_name)
-    {
-        $sql = "Select start_at,end_at,slot_duration from `doctor_availabilities` where doctor_id = $doctor_id and day = $day_name";
-        $result = $this->con->query($sql);
-        $slot = [];
-        if ($result && mysqli_num_rows($result) > 0) {
-            while ($row = $result->fetch_assoc()) {
-                $start = strtotime($row['start_at']);
-                $end = strtotime($row['end_at']);
-                $slot_duration = $row['slot_duration'] * 60;
-                for ($time = $start; $time < $end; $time += $slot_duration) {
-                    $slot[] = array(
-                        "value" => $time,
-                        "text" => date('h:i A', $time)
-                    );
-                }
-            }
-
-        }
-        return $slot;
-
+    public function deleteDoctorAppointment($id){
+        $sql = "DELETE FROM `doctor_appointment` where id = $id";
+        return $this->con->query($sql);
     }
+
+
 }

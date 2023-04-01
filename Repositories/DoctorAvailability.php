@@ -33,5 +33,9 @@ class DoctorAvailability extends Model
         }
         return $doctor;
     }
+    public function deleteDoctorAvailability($id){
+        $sql = "DELETE FROM `doctor_availabilities` where id = $id";
+        return $this->con->query($sql);
+    }
 
 }

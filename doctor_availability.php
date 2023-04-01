@@ -78,16 +78,16 @@
 <script>
     function getHtml(results) {
         let html = '';
-        for (var i = 0; i < results.length; i++) {
-            let reuslt = results[i]
+        for (let i = 0; i < results.length; i++) {
+            let result = results[i]
             html += `<tr>
-<td>${reuslt['id']}</td>
-<td>${reuslt['name']}</td>
-<td>${reuslt['specialization']}</td>
-<td>${reuslt['day']}</td>
-<td>${reuslt['start_at']}</td>
-<td>${reuslt['end_at']}</td>
-            <td><a href="" class="btn btn-danger">Delete</a></td>
+<td>${result['id']}</td>
+<td>${result['name']}</td>
+<td>${result['specialization']}</td>
+<td>${result['day']}</td>
+<td>${result['start_at']}</td>
+<td>${result['end_at']}</td>
+            <td><a href="" class="btn btn-danger delete" data-id="${result['id']}">Delete</a></td>
 
 </tr>`
 
@@ -106,13 +106,27 @@
         })
     }
     loadData();
+    $(document).on("click",".delete",  function (event){
+        event.preventDefault();
+        let id = $(this).data('id');
+        $.ajax({
+            url: "api.php?action=delete_doctor_availability&id=" + id,
+            method:"POST",
+            success:(resp) =>{
+                loadData();
+            }
+        })
+    })
+
+
+
     $.ajax({
         url: 'api.php?action=get_specialization',
         method: 'GET',
         success: function (specializations) {
 
             let options = '<option value="">Select Specialization...!</option>';
-            for (var i = 0; i < specializations.length; i++) {
+            for (let i = 0; i < specializations.length; i++) {
                 let specialization = specializations[i];
                 options += `<option value="${specialization['id']}">${specialization['specialization']}</option>`;
             }

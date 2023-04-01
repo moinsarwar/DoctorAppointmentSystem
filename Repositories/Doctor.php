@@ -26,6 +26,10 @@ class Doctor extends Model
         $sql = "insert into `doctors`(name,email,phone_number,degree,specialization_id) values ('".$data["name"]."','".$data['email']."','".$data['number']."','".$data['degree']."','".$data['specialization']."')";
         return $this->con->query($sql);
     }
+    public function delete_dotor($id){
+        $sql = "Delete From `doctors` where id = $id";
+        return $this->con->query($sql);
+    }
 
 
 }

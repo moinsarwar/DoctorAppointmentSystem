@@ -22,6 +22,11 @@ else if ( $action == "create_specialization") {
     $specialization = new Specialization();
     $specialization->save($_POST);
 }
+else if ($action == "delete_specialization"){
+    $id = $_GET['id'];
+    $delete = new Specialization();
+    $delete->delete_specialization($id);
+}
 //Doctor Crud
 else if ($action == "get_doctor") {
     $doctors = new Doctor();
@@ -30,6 +35,11 @@ else if ($action == "get_doctor") {
 else if($action == "create_doctor"){
     $doctors = new Doctor();
     $doctors->save($_POST);
+}
+else if ($action == "delete_doctor"){
+    $id = $_GET['id'];
+    $deleteDoctor = new Doctor();
+    $deleteDoctor->delete_dotor($id);
 }
 // Doctor Availability Crud
 else if ($action == "get_doctor_availability"){
@@ -45,6 +55,12 @@ else if ($action == "create_doctor_availability"){
     $doctoravailability = new DoctorAvailability();
     $doctoravailability->save($_POST);
 }
+else if ($action == "delete_doctor_availability"){
+    $id = $_GET['id'];
+    $deleteDoctorAvailability = new DoctorAvailability();
+    $deleteDoctorAvailability->deleteDoctorAvailability($id);
+}
+
 // Doctor Appointment Crud
 else if ($action == "get_doctor_appointment"){
     $doctorAppointment = new DoctorAppointment();
@@ -54,11 +70,9 @@ else if ($action == "create_doctor_appointment"){
     $appointment = new DoctorAppointment();
     $appointment->save($_POST);
 }
-
-else if($action == "get_time_slots"){
-    $doctor_id = $_GET['doctor_id'];
-    $date = $_GET['date'];
-    $day_name = date('l',strtotime($date));
-    $slots = new DoctorAppointment();
-    json($slots->getTimeSlot($doctor_id,$day_name));
+else if($action == "delete_doctor_appointment"){
+    $id = $_GET['id'];
+    $deleteDoctorAppointment = new DoctorAppointment();
+    $deleteDoctorAppointment->deleteDoctorAppointment($id);
 }
+

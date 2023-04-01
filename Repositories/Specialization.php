@@ -2,7 +2,8 @@
 
 class Specialization extends Model
 {
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
     }
 
@@ -12,7 +13,8 @@ class Specialization extends Model
         return $this->con->query($sql);
     }
 
-    public function all() {
+    public function all()
+    {
         $rows = $this->getAllDataFromDatabase();
         $return_data = [];
         while ($row = $rows->fetch_assoc()) {
@@ -21,9 +23,18 @@ class Specialization extends Model
         return $return_data;
     }
 
-    public function save(array $data) {
-        $sql = "INSERT into specializations (specialization) values ('".$data["name"]."')";
+    public function save(array $data)
+    {
+        $sql = "INSERT into specializations (specialization) values ('" . $data["name"] . "')";
         return $this->con->query($sql);
     }
+
+
+    public function delete_specialization($id)
+    {
+        $sql = "DELETE FROM specializations WHERE id = $id";
+        return $this->con->query($sql);
+    }
+
 
 }

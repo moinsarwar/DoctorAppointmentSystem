@@ -50,15 +50,14 @@
 
 <script>
     function getHtml(results) {
-        debugger
         let html = "";
         for (var i = 0; i < results.length; i++) {
             let result = results[i];
             html += `<tr>
             <td>${result['id']}</td>
             <td>${result['specialization']}</td>
-            <td><a href="" class="btn btn-danger">Delete</a></td>
-            </tr>`;
+<td><a href="#" class="btn btn-danger" data-id="${result['id']}">Delete</a></td>
+</tr>`;
         }
         return html;
     }
@@ -73,6 +72,19 @@
         })
     }
     loadData();
+    $(document).on("click", ".btn-danger", function(event) {
+        event.preventDefault();
+        debugger
+        let id = $(this).data("id");
+            $.ajax({
+                url: "api.php?action=delete_specialization&id=" + id,
+                method: "POST",
+                success: (resp) => {
+                    loadData();
+                }
+            })
+    });
+
 
 
     $("#createSpecialization").on("submit", (event) => {
