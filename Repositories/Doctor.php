@@ -6,30 +6,28 @@ class Doctor extends Model
     {
         parent::__construct();
     }
-
-    private function getDoctors()
-    {
-        $sql = "SELECT doctors.id,doctors.name,doctors.email,doctors.phone_number,doctors.degree,specializations.specialization  from `doctors` INNER JOIN specializations ON doctors.specialization_id = specializations.id";
+    private function doctors(){
+        $sql = "SELECT doctors.id,doctors.name,doctors.email,doctors.phone_number,
+       doctors.degree,specializations.specialization AS specialization_id FROM `doctors` INNER JOIN specializations ON 
+           doctors.specialization_id = specializations.id";
         return $this->con->query($sql);
     }
-
-    public function all()
-    {
-        $rows = $this->getDoctors();
-        $doctor = [];
-        while ($row = $rows->fetch_assoc()) {
-            $doctor[] = $row;
+    public function all(){
+        $doctors = $this->doctors();
+        $data = [];
+        while ($doctor = $doctors->fetch_assoc()){
+            $data[] = $doctor;
         }
-        return $doctor;
-    }
-    public function save(array $data){
-        $sql = "insert into `doctors`(name,email,phone_number,degree,specialization_id) values ('".$data["name"]."','".$data['email']."','".$data['number']."','".$data['degree']."','".$data['specialization']."')";
-        return $this->con->query($sql);
-    }
-    public function delete_dotor($id){
-        $sql = "Delete From `doctors` where id = $id";
-        return $this->con->query($sql);
+        return $data;
     }
 
+    public function save(array $data){
+        $sql = "INSERT INTO `doctors` (name,email,phone_number,degree,specialization_id) values ('".$data["name"]."','".$data['email']."','".$data['number']."','".$data['degree']."','".$data['specialization']."')";
+        return $this->con->query($sql);
+    }
+    public function deleteDoctor($id){
+        $sql = "DELETE FROM `doctors` where id = $id";
+        return $this->con->query($sql);
+    }
 
 }

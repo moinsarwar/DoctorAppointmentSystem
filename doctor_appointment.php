@@ -4,7 +4,7 @@
     <a href="#" class="btn btn-primary mb-5 data-toggle=" data-toggle="modal" data-target="#createdoctorappointment">Create
         Doctor Appointment</a>
     <table class="table table-hover table-active table-bordered">
-        <thead class="thead-dark">
+        <thead class="bg-warning">
         <tr>
             <th scope="col" class="text-center">ID</th>
             <th scope="col" class="text-center">Patient Name</th>
@@ -16,22 +16,22 @@
             <th scope="col" class="text-center">Action</th>
         </tr>
         </thead>
-        <tbody id="doctor_appointment_list">
+        <tbody id="doctor_appointment_list" class="bg-success text-light">
         </tbody>
     </table>
 </div>
 
 
-<div class="modal " id="createdoctorappointment" tabindex="-1" role="dialog">
+<div class="modal pt-5 mt-5  " id="createdoctorappointment" tabindex="-1" role="dialog">
     <div class="modal-dialog " role="document">
-        <div class="modal-content bg-dark text-light">
+        <div class="modal-content bg-warning">
             <div class="modal-header">
                 <h5 class="modal-title">Create Doctor Availability</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form id="createappointment">
+            <form id="createappointment" class="bg-warning">
                 <div class="modal-body">
                     <div class="form-group">
                         <input type="text" id="patient_name" name="patient_name" class="form-control"
@@ -63,8 +63,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" id="btn" class="btn btn-success">Save changes</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" id="btn" class="btn btn-success">Submit</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                 </div>
             </form>
 
@@ -82,8 +82,8 @@
 <td>${result['id']}</td>
 <td>${result['patient_name']}</td>
 <td>${result['patient_phone']}</td>
-<td>${result['name']}</td>
-<td>${result['specialization']}</td>
+<td>${result['doctor_id']}</td>
+<td>${result['specialization_id']}</td>
 <td>${result['day']}</td>
 <td>${result['appointment_time']}</td>
             <td><a href="" class="btn btn-danger delete" data-id="${result['id']}">Delete</a></td>
@@ -95,7 +95,7 @@
     }
     let loadData = () => {
         $.ajax({
-            url: "api.php?action=get_doctor_appointment",
+            url: "api.php?action=doctor_appointment",
             method: "GET",
             success: (resp) => {
                 $('#doctor_appointment_list').html(getHtml(resp));
@@ -119,7 +119,7 @@
     })
 
     $.ajax({
-        url: 'api.php?action=get_specialization',
+        url: 'api.php?action=specialization',
         method: 'GET',
         success: function (specializations) {
 

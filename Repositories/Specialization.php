@@ -7,34 +7,29 @@ class Specialization extends Model
         parent::__construct();
     }
 
-    private function getAllDataFromDatabase()
+    private function getspecialization()
     {
-        $sql = "SELECT * FROM specializations";
+        $sql = "SELECT * FROM `specializations`";
         return $this->con->query($sql);
     }
 
     public function all()
     {
-        $rows = $this->getAllDataFromDatabase();
-        $return_data = [];
-        while ($row = $rows->fetch_assoc()) {
-            $return_data[] = $row;
+        $rows = $this->getspecialization();
+        $data = [];
+        while ($row = $rows->fetch_assoc()){
+            $data[] = $row;
         }
-        return $return_data;
+        return $data;
     }
 
-    public function save(array $data)
-    {
-        $sql = "INSERT into specializations (specialization) values ('" . $data["name"] . "')";
+    public function save(array $data){
+        $sql = "INSERT INTO `specializations` (specialization) values ('".$data['name']."')";
         return $this->con->query($sql);
     }
-
-
-    public function delete_specialization($id)
-    {
-        $sql = "DELETE FROM specializations WHERE id = $id";
+    public function delete($id){
+        $sql = "DELETE FROM `specializations` where id = $id";
         return $this->con->query($sql);
     }
-
 
 }

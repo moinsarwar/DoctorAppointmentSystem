@@ -4,7 +4,7 @@
     <a href="#" class="btn btn-primary mb-5" data-toggle="modal" data-target="#createdoctoravailability">Create Doctor
         Availability</a>
     <table class="table table-hover table-active table-bordered">
-        <thead class="thead-dark">
+        <thead class="bg-warning">
         <tr>
             <th scope="col" class="text-center">ID</th>
             <th scope="col" class="text-center">Name</th>
@@ -15,22 +15,22 @@
             <th scope="col" class="text-center">Action</th>
         </tr>
         </thead>
-        <tbody id="doctor_availability_list">
+        <tbody id="doctor_availability_list" class="bg-success text-light">
         </tbody>
     </table>
 </div>
 
 
-<div class="modal " id="createdoctoravailability" tabindex="-1" role="dialog">
+<div class="modal mt-5 pt-5 " id="createdoctoravailability" tabindex="-1" role="dialog">
     <div class="modal-dialog " role="document">
         <div class="modal-content bg-dark text-light">
-            <div class="modal-header">
-                <h5 class="modal-title">Create Doctor Availability</h5>
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title text-dark">Create Doctor Availability</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form id="createavailability">
+            <form id="createavailability" class="bg-warning">
                 <div class="modal-body">
                     <div class="form-group">
                         <select id="specialization" name="specialization" class="form-control" required>
@@ -66,7 +66,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="submit" id="btn" class="btn btn-success">Save changes</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                 </div>
             </form>
 
@@ -82,8 +82,8 @@
             let result = results[i]
             html += `<tr>
 <td>${result['id']}</td>
-<td>${result['name']}</td>
-<td>${result['specialization']}</td>
+<td>${result['doctor_id']}</td>
+<td>${result['specialization_id']}</td>
 <td>${result['day']}</td>
 <td>${result['start_at']}</td>
 <td>${result['end_at']}</td>
@@ -97,7 +97,7 @@
 
     let loadData = () => {
         $.ajax({
-            url: "api.php?action=get_doctor_availability",
+            url: "api.php?action=doctor_availability",
             method: "GET",
             success: (resp) => {
                 $('#doctor_availability_list').html(getHtml(resp));
@@ -121,7 +121,7 @@
 
 
     $.ajax({
-        url: 'api.php?action=get_specialization',
+        url: 'api.php?action=specialization',
         method: 'GET',
         success: function (specializations) {
 
@@ -133,8 +133,6 @@
             $('#specialization').html(options);
         }
     });
-
-
     $('#specialization').change(function (){
         let specializationValue = $('#specialization').val()
         $.ajax({
@@ -153,15 +151,10 @@
                     element.text = data.name
                     element.value = data.id
                     html.add(element)
-
-
                 }
-
-
             }
         })
     });
-
     $('#createavailability').on('submit', (event) => {
         event.preventDefault();
         let name = $('#name').val();
@@ -170,11 +163,9 @@
         let start_at = $('#start_at').val();
         let end_at = $('#end_at').val();
         $.ajax({
-
             url: "api.php?action=create_doctor_availability",
-           method: "POST",
+            method: "POST",
             data: {
-
                 name: name,
                 specialization: specialization,
                 day: day,
@@ -182,13 +173,11 @@
                 end_at: end_at,
             },
             success: (resp) => {
-
                 loadData();
                 $("#createdoctoravailability").modal('hide');
                 $("#createavailability").find("input").val("");
             }
         })
-
     });
 
 

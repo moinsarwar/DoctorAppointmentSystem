@@ -1,50 +1,49 @@
 <?php
-include("Repositories/Model.php");
-include ('Repositories/DoctorAppointment.php');
-include ('Repositories/DoctorAvailability.php');
-include("Repositories/Specialization.php");
-include('Repositories/Doctor.php');
+require ("Repositories/Model.php");
+require ("Repositories/DoctorAppointment.php");
+require ("Repositories/DoctorAvailability.php");
+require ("Repositories/Doctor.php");
+require("Repositories/Specialization.php");
 
 $action = $_GET['action'];
-
 function json($data)
 {
     header("Content-Type: application/json");
     echo json_encode($data);
-    die() ;
+    die();
 }
-//Specialization Crud
-if ($action == "get_specialization") {
-    $specializationRepo = new Specialization();
-    json($specializationRepo->all());
-}
-else if ( $action == "create_specialization") {
+//Specialization CRUD
+if ($action == "specialization") {
     $specialization = new Specialization();
-    $specialization->save($_POST);
+    json($specialization->all());
 }
-else if ($action == "delete_specialization"){
+elseif ($action == "create_specialization"){
+    $createSpecialization = new Specialization();
+    $createSpecialization->save($_POST);
+}
+elseif ($action == "delete_specialization"){
     $id = $_GET['id'];
-    $delete = new Specialization();
-    $delete->delete_specialization($id);
+    $deleteSpecialization = new Specialization();
+    $deleteSpecialization->delete($id);
 }
-//Doctor Crud
-else if ($action == "get_doctor") {
-    $doctors = new Doctor();
-    json($doctors->all());
+//Doctor CRUD
+else if($action == "doctor"){
+    $doctor = new Doctor();
+    json($doctor->all());
 }
-else if($action == "create_doctor"){
+elseif($action == "create_doctor"){
     $doctors = new Doctor();
     $doctors->save($_POST);
 }
 else if ($action == "delete_doctor"){
     $id = $_GET['id'];
     $deleteDoctor = new Doctor();
-    $deleteDoctor->delete_dotor($id);
+    $deleteDoctor->deleteDoctor($id);
 }
-// Doctor Availability Crud
-else if ($action == "get_doctor_availability"){
-    $doctoravailability = new DoctorAvailability();
-    json($doctoravailability->all());
+// Doctor Availability CRUD
+else if($action == "doctor_availability"){
+    $doctorAvailability = new DoctorAvailability();
+    json($doctorAvailability->all());
 }
 else if ($action == "get_doctor_by_specialization") {
     $specialization_id = $_GET['specialization_id'];
@@ -60,9 +59,8 @@ else if ($action == "delete_doctor_availability"){
     $deleteDoctorAvailability = new DoctorAvailability();
     $deleteDoctorAvailability->deleteDoctorAvailability($id);
 }
-
-// Doctor Appointment Crud
-else if ($action == "get_doctor_appointment"){
+// Doctor Appointment CRUD
+else if ($action == "doctor_appointment"){
     $doctorAppointment = new DoctorAppointment();
     json($doctorAppointment->all());
 }
@@ -75,4 +73,3 @@ else if($action == "delete_doctor_appointment"){
     $deleteDoctorAppointment = new DoctorAppointment();
     $deleteDoctorAppointment->deleteDoctorAppointment($id);
 }
-
