@@ -1,7 +1,7 @@
 <?php include("layout/header.php"); ?>
 
 <div class="container">
-    <a href="#" class="btn btn-primary mb-5" id="cr" data-toggle="modal" data-target="#createSpecialization">Create
+    <a href="#" class="btn btn-primary mb-5" id="cr" data-toggle="modal" data-target="#specializationModal">Create
         Specialization</a>
     <table class="table  table-bordered">
         <thead class="bg-warning ">
@@ -18,7 +18,7 @@
         </tbody>
     </table>
 </div>
-<div class="modal mt-5 pt-5" id="createSpecialization" tabindex="-1" role="dialog">
+<div class="modal mt-5 pt-5" id="specializationModal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content  bg-dark text-light">
             <div class="modal-header bg-warning">
@@ -33,6 +33,7 @@
                         <label for="name">Name of Specialization</label>
                         <input type="text" id="name" name="name" class="form-control"
                                placeholder="Please enter the name of specialization" required>
+                        <input type="hidden" id="id">
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -40,7 +41,6 @@
                     <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                 </div>
             </form>
-
         </div>
     </div>
 </div>
@@ -52,7 +52,10 @@
             html += `<tr>
             <td>${result['id']}</td>
             <td>${result['specialization']}</td>
-            <td><a href="" class="btn text-light btn-danger delete" data-id="${result['id']}">Delete</a></td>
+            <td>
+                <a href="" class="btn text-light btn-danger delete" data-id="${result['id']}">Delete</a>
+                <a href="" class="btn text-light btn-info edit" data-id="${result['id']}">Edit</a>
+            </td>
 </tr>`;
         }
         return html;
@@ -67,39 +70,70 @@
             }
         })
     }
-    $(document).on("click",".delete",function (event){
+    $(document).on("click", ".delete", function (event) {
         event.preventDefault();
         let id = $(this).data('id');
         $.ajax({
-            url:"api.php?action=delete_specialization&id=" + id,
-            method:"POST",
-            success:(resp) =>{
-                loadData();
-            }
-        })
-
-
-    })
-    loadData();
-    $("#createSpecialization").on("submit", (event) => {
-        event.preventDefault();
-        let name = $("#name").val();
-        $.ajax({
-            url: "api.php?action=create_specialization",
+            url: "api.php?action=delete_specialization&id=" + id,
             method: "POST",
-            data: {
-                name: name
-            },
             success: (resp) => {
                 loadData();
-                $("#createSpecialization").modal('hide');
-                $("#createSpecialization").find("input").val("");
+            }
+        })
+    })
+    let isEditMode = false;
+    $(document).on("click", ".edit", function (event) {
+        event.preventDefault();
+
+        let id = $(this).data('id');
+        $.ajax({
+            url: "api.php?action=get_specialization&id="+id,
+            method: "GET",
+            success: (resp) => {
+                isEditMode = true;
+                $("#name").val(resp.specialization);
+                $("#specializationModal").modal();                $("#id").val(resp.id);
 
             }
         })
+    })
 
+    loadData();
+
+    $("#createSpecialization").on("submit", (event) => {
+        event.preventDefault();
+        if (!isEditMode) {
+            let name = $("#name").val();
+            $.ajax({
+                url: "api.php?action=create_specialization",
+                method: "POST",
+                data: {
+                    name: name
+                },
+                success: (resp) => {
+                    loadData();
+                    $("#specializationModal").modal('hide');
+                    $("#specializationModal").find("input").val("");
+
+                }
+            })
+        } else {
+            let id = $("#id").val();
+            $.ajax({
+                url: "api.php?action=update_specialization&id=" + id,
+                data : {
+                    name: $("#name").val()
+                },
+                method: "POST",
+                success: (resp) => {
+                    loadData();
+                    $("#specializationModal").modal("hide");
+                    $("#name").val("");
+                    isEditMode = false;
+                }
+            })
+        }
     });
-
 
 
 </script>
