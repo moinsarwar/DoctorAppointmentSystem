@@ -90,15 +90,14 @@
             url: "api.php?action=get_specialization&id="+id,
             method: "GET",
             success: (resp) => {
-                isEditMode = true;
+                    isEditMode = true;
                 $("#name").val(resp.specialization);
-                $("#specializationModal").modal();                $("#id").val(resp.id);
-
+                $("#specializationModal").modal();
+                $("#id").val(resp.id);
             }
         })
     })
-
-    loadData();
+        loadData();
 
     $("#createSpecialization").on("submit", (event) => {
         event.preventDefault();
@@ -111,10 +110,8 @@
                     name: name
                 },
                 success: (resp) => {
+                    window.location.reload();
                     loadData();
-                    $("#specializationModal").modal('hide');
-                    $("#specializationModal").find("input").val("");
-
                 }
             })
         } else {
@@ -126,9 +123,9 @@
                 },
                 method: "POST",
                 success: (resp) => {
+                    window.location.reload();
                     loadData();
-                    $("#specializationModal").modal("hide");
-                    $("#name").val("");
+
                     isEditMode = false;
                 }
             })

@@ -28,22 +28,37 @@ if ($action == "specialization") {
     $id = $_GET['id'];
     $specialization = new Specialization();
     json($specialization->get($id));
-} elseif ($action == "update_specialization") {
+}
+elseif ($action == "update_specialization") {
     $id = $_GET['id'];
     $specialization = new Specialization();
     $specialization->update($id, $_POST);
-} //Doctor CRUD
+}
+
+//Doctor CRUD
 else if ($action == "doctor") {
     $doctor = new Doctor();
     json($doctor->all());
 } elseif ($action == "create_doctor") {
-    $doctors = new Doctor();
-    $doctors->save($_POST);
+    $Doctor = new Doctor();
+    $Doctor->save($_POST);
 } else if ($action == "delete_doctor") {
     $id = $_GET['id'];
-    $deleteDoctor = new Doctor();
-    $deleteDoctor->deleteDoctor($id);
-} // Doctor Availability CRUD
+    $Doctor = new Doctor();
+    $Doctor->deleteDoctor($id);
+}
+ elseif ($action == "get_doctor") {
+    $id = $_GET['id'];
+    $Doctor = new Doctor();
+    json($Doctor->get($id));
+}
+elseif ($action == "update_doctor") {
+    $id = $_GET['id'];
+    $Doctor = new Doctor();
+    $Doctor->update($id, $_POST);
+}
+
+// Doctor Availability CRUD
 else if ($action == "doctor_availability") {
     $doctorAvailability = new DoctorAvailability();
     json($doctorAvailability->all());
@@ -52,21 +67,43 @@ else if ($action == "doctor_availability") {
     $doctors = new DoctorAvailability();
     json($doctors->getDoctorsBySpecialization($specialization_id));
 } else if ($action == "create_doctor_availability") {
-    $doctoravailability = new DoctorAvailability();
-    $doctoravailability->save($_POST);
+    $doctorAvailability = new DoctorAvailability();
+    $doctorAvailability->save($_POST);
 } else if ($action == "delete_doctor_availability") {
     $id = $_GET['id'];
-    $deleteDoctorAvailability = new DoctorAvailability();
-    $deleteDoctorAvailability->deleteDoctorAvailability($id);
-} // Doctor Appointment CRUD
+    $doctorAvailability = new DoctorAvailability();
+    $doctorAvailability->deleteDoctorAvailability($id);
+}
+elseif ($action == "get_doctor_availability") {
+    $id = $_GET['id'];
+    $doctorAvailability = new DoctorAvailability();
+    json($doctorAvailability->get($id));
+}
+elseif($action == "update_doctor_availability"){
+    $id = $_GET['id'];
+    $doctorAvailability = new DoctorAvailability();
+    $doctorAvailability->update($id,$_POST);
+}
+
+// Doctor Appointment CRUD
 else if ($action == "doctor_appointment") {
-    $doctorAppointment = new DoctorAppointment();
-    json($doctorAppointment->all());
+    $DoctorAppointment = new DoctorAppointment();
+    json($DoctorAppointment->all());
 } else if ($action == "create_doctor_appointment") {
-    $appointment = new DoctorAppointment();
-    $appointment->save($_POST);
+    $DoctorAppointment = new DoctorAppointment();
+    $DoctorAppointment->save($_POST);
 } else if ($action == "delete_doctor_appointment") {
     $id = $_GET['id'];
-    $deleteDoctorAppointment = new DoctorAppointment();
-    $deleteDoctorAppointment->deleteDoctorAppointment($id);
+    $DoctorAppointment = new DoctorAppointment();
+    $DoctorAppointment->deleteDoctorAppointment($id);
+}
+elseif($action == "get_doctor_appointment"){
+    $id = $_GET['id'];
+    $DoctorAppointment = new DoctorAppointment();
+    json($DoctorAppointment->get($id));
+}
+elseif($action == "update_doctor_appointment"){
+    $id = $_GET['id'];
+    $DoctorAppointment = new DoctorAppointment();
+    $DoctorAppointment->update($id,$_POST);
 }

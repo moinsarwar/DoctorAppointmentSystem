@@ -1,7 +1,7 @@
 <?php include("layout/header.php") ?>
 
 <div class="container">
-    <a href="#" class="btn btn-primary mb-5" data-toggle="modal" data-target="#createdoctoravailability">Create Doctor
+    <a href="#" class="btn btn-primary mb-5" data-toggle="modal" data-target="#doctoravailabilityModal">Create Doctor
         Availability</a>
     <table class="table table-hover table-active table-bordered">
         <thead class="bg-warning">
@@ -21,7 +21,7 @@
 </div>
 
 
-<div class="modal mt-5 pt-5 " id="createdoctoravailability" tabindex="-1" role="dialog">
+<div class="modal mt-5 pt-5 " id="doctoravailabilityModal" tabindex="-1" role="dialog">
     <div class="modal-dialog " role="document">
         <div class="modal-content bg-dark text-light">
             <div class="modal-header bg-warning">
@@ -32,7 +32,9 @@
             </div>
             <form id="createavailability" class="bg-warning">
                 <div class="modal-body">
+
                     <div class="form-group">
+
                         <select id="specialization" name="specialization" class="form-control" required>
                             <option value="">Select Specialization...!</option>
                         </select>
@@ -41,6 +43,8 @@
                         <select id="name" name="name" class="form-control" required>
                             <option value="">Select Doctor...!</option>
                         </select>
+                        <input type="hidden" id="id">
+
                     </div>
 
                     <div class="form-group">
@@ -87,7 +91,9 @@
 <td>${result['day']}</td>
 <td>${result['start_at']}</td>
 <td>${result['end_at']}</td>
-            <td><a href="" class="btn btn-danger delete" data-id="${result['id']}">Delete</a></td>
+            <td><a href="" class="btn btn-danger delete" data-id="${result['id']}">Delete</a>
+                <a href="" class="btn btn-info edit" data-id="${result['id']}">Edit</a>
+            </td>
 
 </tr>`
 
@@ -116,10 +122,7 @@
                 loadData();
             }
         })
-    })
-
-
-
+    });
     $.ajax({
         url: 'api.php?action=specialization',
         method: 'GET',
@@ -133,6 +136,9 @@
             $('#specialization').html(options);
         }
     });
+
+
+
     $('#specialization').change(function (){
         let specializationValue = $('#specialization').val()
         $.ajax({
@@ -155,29 +161,72 @@
             }
         })
     });
-    $('#createavailability').on('submit', (event) => {
+
+    let isEditMode = false;
+    $(document).on("click", ".edit", function (event) {
         event.preventDefault();
-        let name = $('#name').val();
-        let specialization = $('#specialization').val();
-        let day = $('#day').val();
-        let start_at = $('#start_at').val();
-        let end_at = $('#end_at').val();
+
+        let id = $(this).data('id');
         $.ajax({
-            url: "api.php?action=create_doctor_availability",
-            method: "POST",
-            data: {
-                name: name,
-                specialization: specialization,
-                day: day,
-                start_at: start_at,
-                end_at: end_at,
-            },
+            url: "api.php?action=get_doctor_availability&id=" + id,
+            method: "GET",
             success: (resp) => {
-                loadData();
-                $("#createdoctoravailability").modal('hide');
-                $("#createavailability").find("input").val("");
+                isEditMode = true;
+                $('#id').val(resp.id);
+                $("#name").val(resp.doctor_id);
+                $("#specialization").val(resp.specialization_id);
+                $("#day").val(resp.day);
+                $("#start_at").val(resp.start_at);
+                $("#end_at").val(resp.end_at);
+                $("#doctoravailabilityModal").modal();
+
             }
         })
+    })
+    loadData();
+
+    $('#createavailability').on('submit', (event) => {
+        if(!isEditMode){
+            event.preventDefault();
+            let name = $('#name').val();
+            let specialization = $('#specialization').val();
+            let day = $('#day').val();
+            let start_at = $('#start_at').val();
+            let end_at = $('#end_at').val();
+            $.ajax({
+                url: "api.php?action=create_doctor_availability",
+                method: "POST",
+                data: {
+                    name: name,
+                    specialization: specialization,
+                    day: day,
+                    start_at: start_at,
+                    end_at: end_at,
+                },
+                success: (resp) => {
+                    window.location.reload();
+                    loadData();
+                }
+            })
+        }else{
+            let id = $("#id").val();
+            $.ajax({
+                url: "api.php?action=update_doctor_availability&id=" + id,
+                data : {
+                    name: $("#name").val(),
+                    specialization:$("#specialization").val(),
+                    day:$("#day").val(),
+                    start_at:$("#start_at").val(),
+                    end_at:$("#end_at").val(),
+                },
+                method: "POST",
+                success: (resp) => {
+                    window.location.reload();
+                    loadData();
+                    isEditMode = false;
+                }
+            })
+        }
     });
 
 

@@ -41,4 +41,13 @@ class DoctorAvailability extends Model
         $sql = "DELETE FROM `doctor_availabilities` where id = $id";
         return $this->con->query($sql);
     }
+    public function get($id){
+        $sql = "SELECT * FROM `doctor_availabilities` WHERE id = $id";
+        return $this->con->query($sql)->fetch_assoc();
+    }
+    public function update($id,array $data){
+        $sql = "UPDATE `doctor_availabilities` SET doctor_id = '".$data['name']."',specialization_id = '".$data['specialization']."',
+        day = '".$data['day']."',start_at = '".$data['start_at']."',end_at = '".$data['end_at']."' where id = $id ";
+        return $this->con->query($sql);
+    }
 }

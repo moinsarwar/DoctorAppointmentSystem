@@ -1,6 +1,6 @@
 <?php include('layout/header.php'); ?>
 <div class="container">
-    <a href="#" class="btn btn-primary mb-5" data-toggle="modal" data-target="#createdoctor">Create Doctor</a>
+    <a href="#" class="btn btn-primary mb-5" data-toggle="modal" data-target="#doctorModal">Create Doctor</a>
     <table class="table  table-bordered">
         <thead class="bg-warning">
         <tr>
@@ -21,7 +21,7 @@
     </table>
 </div>
 
-<div class="modal mt-5 pt-5  " id="createdoctor" tabindex="-1" role="dialog">
+<div class="modal mt-5 pt-5  " id="doctorModal" tabindex="-1" role="dialog">
     <div class="modal-dialog " role="document">
         <div class="modal-content bg-dark text-light">
             <div class="modal-header bg-warning">
@@ -36,6 +36,8 @@
                         <!--                        <label for="name">Name</label>-->
                         <input type="text" id="name" name="name" class="form-control"
                                placeholder="Name" required>
+                        <input type="hidden" id="id">
+
                     </div>
                     <div class="form-group">
                         <!--                        <label for="name">Name</label>-->
@@ -80,14 +82,16 @@
     <td>${result['specialization_id']}</td>
     <td>${result['phone_number']}</td>
     <td>${result['degree']}</td>
-            <td><a href="" class="btn text-light btn-danger delete" data-id="${result['id']}" >Delete</a></td>
+            <td><a href="" class="btn text-light btn-danger delete" data-id="${result['id']}" >Delete</a>
+                <a href="" class="btn text-light btn-info edit" data-id="${result['id']}" >Edit</a>
+            </td>
 
 </tr>`
         }
         return html
     }
 
-    let loadData = () =>{
+    let loadData = () => {
         $.ajax({
             url: "api.php?action=doctor",
             method: "Get",
@@ -109,42 +113,80 @@
             $('#specialization').html(options);
         }
     });
-    $(document).on("click",(".delete"), function (event){
+    $(document).on("click", (".delete"), function (event) {
         event.preventDefault();
-        debugger
         let id = $(this).data('id');
         $.ajax({
             url: "api.php?action=delete_doctor&id=" + id,
             method: "POST",
-            success:(resp) =>{
+            success: (resp) => {
                 loadData()
             }
         })
     })
-
-    $('#createdoctor').on("submit", (event) => {
+    let isEditMode = false;
+    $(document).on("click", ".edit", function (event) {
         event.preventDefault();
-        let name = $("#name").val();
-        let email = $('#email').val();
-        let degree = $('#degree').val();
-        let specialization = $('#specialization').val();
-        let number = $('#number').val();
+
+        let id = $(this).data('id');
         $.ajax({
-            url: "api.php?action=create_doctor",
-            method: "POST",
-            data: {
-                name: name,
-                email: email,
-                degree: degree,
-                specialization: specialization,
-                number: number,
-            },
+            url: "api.php?action=get_doctor&id=" + id,
+            method: "GET",
             success: (resp) => {
-                $("#createdoctor").modal('hide');
-                $("#createdoctor").find("input").val("");
-                loadData();
+                let doctor = resp[0];
+                isEditMode = true;
+                $('#id').val(doctor['id']);
+                $("#name").val(doctor['name']);
+                $("#email").val(doctor['email']);
+                $("#specialization").val(doctor['specialization_id']);
+                $("#number").val(doctor['phone_number']);
+                $("#degree").val(doctor['degree']);
+                $("#doctorModal").modal();
+
             }
         })
+    })
+    loadData();
+
+    $('#createdoctor').on("submit", (event) => {
+        if(!isEditMode){
+            event.preventDefault();
+            $.ajax({
+                url: "api.php?action=create_doctor",
+                method: "POST",
+                data: {
+                    name: $("#name").val(),
+                    email: $('#email').val(),
+                    degree: $('#degree').val(),
+                    specialization: $('#specialization').val(),
+                    number: $('#number').val(),
+                },
+                success: (resp) => {
+                    window.location.reload();
+                    loadData();
+                }
+            })
+        }else{
+            let id = $("#id").val();
+            $.ajax({
+                url: "api.php?action=update_doctor&id=" + id,
+                data : {
+                    name: $("#name").val(),
+                    email:$("#email").val(),
+                    degree:$("#degree").val(),
+                    specialization_id:$("#specialization").val(),
+                    phone_number:$("#number").val(),
+                },
+                method: "POST",
+                success: (resp) => {
+                    window.location.reload();
+                    loadData();
+                    // $("#doctorModal").modal("hide");
+                    // $("#createdoctor").val("");
+                    isEditMode = false;
+                }
+            })
+        }
     });
 
 </script>

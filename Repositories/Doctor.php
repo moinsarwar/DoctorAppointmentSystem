@@ -29,5 +29,22 @@ class Doctor extends Model
         $sql = "DELETE FROM `doctors` where id = $id";
         return $this->con->query($sql);
     }
+    public function get($id){
+        $sql = "SELECT * FROM `doctors` where id = $id";
+        $result = $this->con->query($sql);
+        $data = [];
+        while ($row = $result->fetch_assoc()){
+            $data[] = $row;
+        }
+        return $data;
+    }
+
+    public function update($id, array $data)
+    {
+        $sql = "UPDATE `doctors` SET name = '" . $data['name'] . "',phone_number = '".$data['phone_number']."',
+        degree = '".$data['degree']."',email = '".$data['email']."',
+        specialization_id = '".$data['specialization_id']."' where id = $id";
+        return $this->con->query($sql);
+    }
 
 }
