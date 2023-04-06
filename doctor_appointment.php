@@ -38,10 +38,12 @@
                                placeholder="Patient Name" required>
                     </div>
                     <div class="form-group">
+
                         <input type="text" id="patient_number" name="patient_number" class="form-control"
                                placeholder="Patient Mobile Number" required>
                     </div>
                     <div class="form-group">
+
                         <select id="specialization" name="specialization" class="form-control" required>
                             <option value="">Select Specialization...!</option>
                         </select>
@@ -78,7 +80,7 @@
 <script>
     function getHtml(results) {
         let html = '';
-        for (var i = 0; i < results.length; i++) {
+        for (let i = 0; i < results.length; i++) {
             let result = results[i]
             html += `<tr>
 <td>${result['id']}</td>
@@ -166,13 +168,13 @@
             method:"GET",
             success:(resp) => {
                 isEditMode = true;
-                $("#id").val(resp.id),
-                $("#patient_name").val(resp.patient_name),
-                $("#patient_number").val(resp.patient_phone),
-                $("#specialization").val(resp.specialization_id),
-                $("#name").val(resp.doctor_id),
-                $("#day").val(resp.day),
-                $("#appointment_time").val(resp.appointment_time),
+                $("#id").val(resp.id)
+                $("#patient_name").val(resp.patient_name)
+                $("#patient_number").val(resp.patient_phone)
+                $("#specialization").val(resp.specialization_id)
+                $("#name").val(resp.doctor_id)
+                $("#day").val(resp.day)
+                $("#appointment_time").val(resp.appointment_time)
 
                 $("#doctorappointmentModal").modal();
             }
