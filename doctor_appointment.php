@@ -1,7 +1,7 @@
 <?php include("layout/header.php") ?>
 
 <div class="container">
-    <a href="#" class="btn btn-primary mb-5 data-toggle=" data-toggle="modal" data-target="#createdoctorappointment">Create
+    <a href="#" class="btn btn-primary mb-5 data-toggle=" data-toggle="modal" data-target="#doctorappointmentModal">Create
         Doctor Appointment</a>
     <table class="table table-hover table-active table-bordered">
         <thead class="bg-warning">
@@ -22,7 +22,7 @@
 </div>
 
 
-<div class="modal pt-5 mt-5  " id="createdoctorappointment" tabindex="-1" role="dialog">
+<div class="modal pt-5 mt-5  " id="doctorappointmentModal" tabindex="-1" role="dialog">
     <div class="modal-dialog " role="document">
         <div class="modal-content bg-warning">
             <div class="modal-header">
@@ -50,6 +50,8 @@
                         <select id="name" name="name" class="form-control" required>
                             <option value="">Select Doctor...!</option>
                         </select>
+                        <input type="hidden" id="id">
+
                     </div>
                     <div class="form-group">
                         <input type="date" id="day" name="date" class="form-control"
@@ -58,7 +60,7 @@
                     <div class="form-group">
                         <select id="appointment_time" name="appointment_time" class="form-control" required>
                             <option value="">Select Time...!</option>
-                            <option value="">4:30:00</option>
+                            <option value="4:30:00">4:30:00</option>
                         </select>
                     </div>
                 </div>
@@ -86,7 +88,10 @@
 <td>${result['specialization_id']}</td>
 <td>${result['day']}</td>
 <td>${result['appointment_time']}</td>
-            <td><a href="" class="btn btn-danger delete" data-id="${result['id']}">Delete</a></td>
+            <td>
+                <a href="" class="btn btn-danger delete" data-id="${result['id']}">Delete</a>
+                <a href="" class="btn btn-info edit" data-id="${result['id']}">Edit</a>
+            </td>
 
 </tr>`
 
@@ -106,7 +111,6 @@
     loadData();
 
     $(document).on("click",".delete",function (event){
-        debugger
         event.preventDefault();
         let id = $(this).data('id');
         $.ajax({
@@ -153,32 +157,75 @@
             }
         })
     });
-    $('#createappointment').on('submit', (event) => {
+    let isEditMode = false;
+    $(document).on("click",".edit",function (event){
         event.preventDefault();
-        let patient_name = $('#patient_name').val();
-        let patient_phone = $("#patient_number").val();
-        let doctor_id = $("#name").val();
-        let specialization_id = $("#specialization").val();
-        let day = $("#day").val();
-        let appointment_time = $("#appointment_time").val();
-
+        let id = $(this).data('id');
         $.ajax({
-            url: "api.php?action=create_doctor_appointment",
-            method: "POST",
-            data: {
-                patient_name: patient_name,
-                patient_phone: patient_phone,
-                doctor_id: doctor_id,
-                specialization_id: specialization_id,
-                day: day,
-                appointment_time: appointment_time
-            },
-            success: (resp) => {
-                loadData();
-                $("#createdoctorappointment").modal('hide');
-                $("#createappointment").find("input").val("");
+            url: "api.php?action=get_doctor_appointment&id=" + id,
+            method:"GET",
+            success:(resp) => {
+                isEditMode = true;
+                $("#id").val(resp.id),
+                $("#patient_name").val(resp.patient_name),
+                $("#patient_number").val(resp.patient_phone),
+                $("#specialization").val(resp.specialization_id),
+                $("#name").val(resp.doctor_id),
+                $("#day").val(resp.day),
+                $("#appointment_time").val(resp.appointment_time),
+
+                $("#doctorappointmentModal").modal();
             }
         })
+    })
+    $('#createappointment').on('submit', (event) => {
+        if(!isEditMode){
+            event.preventDefault();
+            let patient_name = $('#patient_name').val();
+            let patient_phone = $("#patient_number").val();
+            let doctor_id = $("#name").val();
+            let specialization_id = $("#specialization").val();
+            let day = $("#day").val();
+            let appointment_time = $("#appointment_time").val();
+
+            $.ajax({
+                url: "api.php?action=create_doctor_appointment",
+                method: "POST",
+                data: {
+                    patient_name: patient_name,
+                    patient_phone: patient_phone,
+                    doctor_id: doctor_id,
+                    specialization_id: specialization_id,
+                    day: day,
+                    appointment_time: appointment_time
+                },
+                success: (resp) => {
+                    loadData();
+                    window.location.reload();
+                }
+            })
+        }
+        else{
+            debugger
+            let id = $("#id").val();
+            $.ajax({
+                url: "api.php?action=update_doctor_appointment&id=" + id,
+                method:"POST",
+                data:{
+                    patient_name: $('#patient_name').val(),
+                    patient_phone: $("#patient_number").val(),
+                    doctor_id: $("#name").val(),
+                    specialization_id: $("#specialization").val(),
+                    day: $("#day").val(),
+                    appointment_time: $("#appointment_time").val(),
+                },
+                success:(resp) => {
+
+                }
+
+            })
+
+        }
     })
 
 </script>

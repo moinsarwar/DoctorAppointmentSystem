@@ -7,10 +7,7 @@ class DoctorAppointment extends Model
         parent::__construct();
     }
     private function doctorAppointment(){
-        $sql = "SELECT doctor_appointment.id,doctor_appointment.patient_name,doctor_appointment.patient_phone,
-       doctor_appointment.day,doctor_appointment.appointment_time,specializations.specialization as specialization_id,doctors.name
-           as doctor_id FROM `doctor_appointment`INNER JOIN doctors on doctor_appointment.doctor_id = doctors.id INNER JOIN specializations
-               ON doctor_appointment.specialization_id = specializations.id";
+        $sql = 'SELECT doctor_appointment.id,doctor_appointment.patient_name,doctor_appointment.patient_phone,doctor_appointment.day,doctor_appointment.appointment_time,specializations.specialization as specialization_id,doctors.name as doctor_id FROM `doctor_appointment`INNER JOIN doctors on doctor_appointment.doctor_id = doctors.id INNER JOIN specializations ON doctor_appointment.specialization_id = specializations.id';
         return $this->con->query($sql);
     }
     public function all(){
@@ -30,5 +27,14 @@ class DoctorAppointment extends Model
         $sql = "DELETE FROM `doctor_appointment` where id = $id";
         return $this->con->query($sql);
     }
-
+    public function get($id){
+        $sql = "SELECT * FROM `doctor_appointment` where id = $id";
+        return $this->con->query($sql)->fetch_assoc();
+    }
+    public function update($id, array $data){
+        $sql = "UPDATE `doctor_appointment` set patient_name= '" . $data['patient_name'] . "',patient_phone = '" . $data['patient_phone'] . "',
+        doctor_id = '" . $data['doctor_id'] . "',specialization_id = '" . $data['specialization_id'] . "',day =  '" . $data['day'] . "',
+      appointment_time =  '" . $data['appointment_time'] . "' where id = $id";
+        return $this->con->query($sql);
+    }
 }
