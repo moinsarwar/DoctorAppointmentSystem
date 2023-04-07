@@ -62,7 +62,6 @@
                     <div class="form-group">
                         <select id="appointment_time" name="appointment_time" class="form-control" required>
                             <option value="">Select Time...!</option>
-                            <option value="4:30:00">4:30:00</option>
                         </select>
                     </div>
                 </div>
@@ -159,6 +158,26 @@
             }
         })
     });
+    $("#name").change(function (){
+        $("#day").change(function (){
+        let doctor_id = $("#name").val();
+        let date = $("#day").val();
+        $.ajax({
+            url: "api.php?action=get_doctor_time_slots&doctor_id=" + doctor_id + "&date=" + date,
+            method:"GET",
+            success:(resp) => {
+                let html = document.getElementById('appointment_time');
+                for (let i = 0;i < resp.length;i++){
+                    let data = resp[i]
+                    let element = document.createElement('option')
+                    element.text = data.text
+                    element.value = data.value
+                    html.add(element)
+                }
+            }
+        })
+        })
+    })
     let isEditMode = false;
     $(document).on("click",".edit",function (event){
         event.preventDefault();
@@ -171,6 +190,7 @@
                 $("#id").val(resp.id)
                 $("#patient_name").val(resp.patient_name)
                 $("#patient_number").val(resp.patient_phone)
+
                 $("#specialization").val(resp.specialization_id)
                 $("#name").val(resp.doctor_id)
                 $("#day").val(resp.day)
@@ -202,13 +222,12 @@
                     appointment_time: appointment_time
                 },
                 success: (resp) => {
-                    loadData();
                     window.location.reload();
+                    loadData();
                 }
             })
         }
         else{
-            debugger
             let id = $("#id").val();
             $.ajax({
                 url: "api.php?action=update_doctor_appointment&id=" + id,

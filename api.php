@@ -107,3 +107,9 @@ elseif($action == "update_doctor_appointment"){
     $DoctorAppointment = new DoctorAppointment();
     $DoctorAppointment->update($id,$_POST);
 }
+elseIf($action == "get_doctor_time_slots"){
+    $doctorID = $_GET['doctor_id'];
+    $date = $_GET['date'];
+    $slots = new DoctorAvailability();
+    json($slots->gettimeSlot($doctorID,$date));
+}
